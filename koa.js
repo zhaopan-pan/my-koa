@@ -10,9 +10,8 @@ var router = new Router();
 
 
 const port = process.env.PORT || '3000';
-const uploadHost = `http://localhost:${port}/uploads/`;
 
-const middleware1 = async(ctx, next) => {
+const middleware1 = async (ctx, next) => {
     console.log(1);
     await next();
     console.log(6);
@@ -70,7 +69,7 @@ app
     .use(router.allowedMethods());
 
 app.on('error', (err, ctx) => {
-    console.error('server error', err, ctx);
+    console.error('server error', err);
 });
 //  app.listen(port)
 /**

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>拖拽上传</title>
+    <style>
+        .drop-box {
+            height: 400px;
+            width: 400px;
+            background-color: #ccc;
+            margin-bottom: 30px;
+        }
+
+        .over {
+            background-color: green;
+        }
+
+        img {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="drop-box" id="drop-box">
+        拖动文件到这里,开始上传
+    </div>
+    <button type="button" id="btn-submit">上 传</button>
+</body>
+<script>
+    var box = document.getElementById('drop-box');
+    //禁用浏览器的拖放默认行为
+    document.addEventListener('drop', function (e) {
+        console.log('document drog');
+        e.preventDefault();
+    });
+
+    //设置拖拽事件
+    function openDropEvent() {
+        box.addEventListener("dragover", function (e) {
+            console.log('elemenet dragover');
+            box.classList.add('over');
+            e.preventDefault();
+        });
+        box.addEventListener("dragleave", function (e) {
+            console.log('elemenet dragleave');
+            box.classList.remove('over');
+            e.preventDefault();
+        });
+
+        box.addEventListener("drop", function (e) {
+            e.preventDefault(); //取消浏览器默认拖拽效果
+            console.log(e.dataTransfer);
+            var fileList = e.dataTransfer.files; //获取拖拽中的文件对象
+            var len = fileList.length;//用来获取文件的长度（其实是获得文件数量）
+            //检测是否是拖拽文件到页面的操作
+            if (!len) {
+                box.classList.remove('over');
+                return;
+            }
+            //回显图片
+            for (var i = 0; i < fileList.length; i++) {
+                const imgItem = fileList[i];
+                console.log(imgItem);
+                const imgDom = document.createElement("img");
+                imgDom.src = window.URL.createObjectURL(imgItem);
+                imgDom.onload = function () {
+                    //img加载后要释放所占内存
+                    window.URL.revokeObjectURL(this.src);
+                }
+                box.appendChild(imgDom);
+            }
+            box.classList.add('over');
+            window.willUploadFileList = fileList;
+
+        }, false);
+    }
+
+    openDropEvent();
+
+    function submitUpload() {
+
+        var fileList = window.willUploadFileList || [];
+        if (!fileList.length) {
+            alert('请选择文件');
+            return;
+        }
+
+        var fd = new FormData();   //构造FormData对象
+
+        for (var i = 0; i < fileList.length; i++) {
+            fd.append('f1', fileList[i]);//支持多文件上传
+        }
+
+        var xhr = new XMLHttpRequest();   //创建对象
+        xhr.open('POST', 'http://192.168.0.135:3000/upload', true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                var obj = JSON.parse(xhr.responseText);   //返回值
+                if (obj.fileUrl.length) {
+                    alert('上传成功');
+                }
+            }
+        }
+        xhr.send(fd);//发送
+    }
+    //绑定提交事件
+    document.getElementById('btn-submit').addEventListener('click', submitUpload);
+</script>
+
+</html>

@@ -1,7 +1,7 @@
 {
   "name": "my-koa",
   "version": "1.0.0",
-  "description": "a koajs server demo",
+  "description": "a demos of uploading files with koajs as the back end",
   "main": "koa.js",
   "dependencies": {
     "koa": "^2.10.0",

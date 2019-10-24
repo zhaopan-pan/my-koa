@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    .drop-area {
+        width: 65px;
+        height: 65px;
+        border: 1px solid #ccc;
+    }
+</style>
+
+<body>
+
+    <div class="drop-area" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <img id="drag1" src="./img/fire.png" alt="" width="64px" height="64px" draggable="true"
+            ondragstart="startDrag(event)" />
+    </div>
+    <div class="drop-area" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+</body>
+
+<script>
+    function allowDrop(e) {//ondragover 结束时用preventDefault方法组织浏览器默认事件(默认地，数据/元素无法被放置到其他元素中)  
+        e.preventDefault();
+    }
+    function startDrag(e) {//ondragstart事件 通过setData设置需要拖拽的内容
+        e.dataTransfer.setData("img", e.target.id);
+    }
+    function drop(e) {//下降时设置放置内容
+        e.preventDefault();
+        var data = e.dataTransfer.getData("img");
+        console.log(data)
+        e.target.appendChild(document.getElementById(data));
+    }
+</script>
+
+</html>

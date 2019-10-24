@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>upload</title>
+    <title>图片预览上传且可取消</title>
 
     <style>
         .green {
@@ -20,6 +20,16 @@
             width: 200px;
             height: 20px;
             background: #ccc;
+        }
+
+        .item {
+            display: inline-block;
+            margin: 10px
+        }
+
+        .item-img {
+            width: 100px;
+            height: 100px;
         }
     </style>
 </head>
@@ -58,11 +68,12 @@
             var item = document.createElement('div');
             var progress = document.createElement('div');
             progress.className = 'progress';
-            progress.innerHTML = '<span class="red"></span><button type="button">Abort</button>';
+            progress.innerHTML = '<span class="red"></span><button type="button">取消上传</button>';
             item.className = 'item';
+            img.className = 'item-img';
             img.src = window.URL.createObjectURL(f);
             img.onload = function () {
-                //显示要是否这块儿内存
+                //img加载后要释放所占内存
                 window.URL.revokeObjectURL(this.src);
             }
 
@@ -81,14 +92,16 @@
     function xhrSend({ file, progress }) {
         var progressSpan = progress.firstElementChild;
         var btnCancel = progress.getElementsByTagName('button')[0];
-
         btnCancel.removeEventListener('click', function (e) {
 
         });
         btnCancel.addEventListener('click', function (e) {
             if (xhr && xhr.readyState !== 4) {
+                console.log("取消前", xhr.readyState)
                 //取消上传
                 xhr.abort();
+                btnCancel.parentNode.parentNode.remove()
+                console.log("已取消上传", xhr.readyState)
             }
         });
 
@@ -99,7 +112,7 @@
         fd.append('f1', file);
 
         var xhr = new XMLHttpRequest();   //创建对象
-        xhr.open('POST', 'http://192.168.0.135:3000/', true);
+        xhr.open('POST', 'http://192.168.0.135:3000/upload', true);
 
         xhr.onreadystatechange = function () {
             console.log('state change', xhr.readyState);
